@@ -1,25 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
+using Unity.VisualScripting;
 using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    float _speed = 10.0f;
+    float _speed = 3.0f;
 
 	Vector3 _destPos;
 
     void Start()
     {
-		Managers.Input.MouseAction -= OnMouseClicked;
-		Managers.Input.MouseAction += OnMouseClicked;		
+		Managers.Input.KeyAction -= OnKeyboard;
+		Managers.Input.KeyAction += OnKeyboard;		
 	}
 
 	public enum PlayerState
 	{
 		Die,
 		Moving,
-		Idle,
 	}
 
 	PlayerState _state = PlayerState.Idle;
@@ -52,10 +56,7 @@ public class PlayerController : MonoBehaviour
 
 	void UpdateIdle()
 	{
-		// 애니메이션
-		Animator anim = GetComponent<Animator>();
-
-		anim.SetFloat("speed", 0);
+		
 	}
 
 	void Update()
@@ -68,12 +69,24 @@ public class PlayerController : MonoBehaviour
 			case PlayerState.Moving:
 				UpdateMoving();
 				break;
-			case PlayerState.Idle:
-				UpdateIdle();
-				break;
 		}
 	}
 
+	void OnKeyboard()
+	{
+		float moveVertical = Input.GetAxis("Vertical") * Time.deltaTime * _speed;
+		float moveHorizontal = Input.GetAxis("Horizontal") * Time.deltaTime * _speed;
+		transform.Translate(moveHorizontal,moveVertical,0);
+		if (Input.GetKey(KeyCode.A))
+		{
+			transform.localScale = new Vector3(-1.0f,1.0f,1.0f);
+		}
+		if (Input.GetKey(KeyCode.D))
+		{
+			transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+		}
+
+	}
 	void OnMouseClicked(Define.MouseEvent evt)
 	{
 		if (_state == PlayerState.Die)
