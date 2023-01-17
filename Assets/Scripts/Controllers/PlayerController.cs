@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
 	{
 		Die,
 		Moving,
+		Idle,
 	}
 
 	PlayerState _state = PlayerState.Idle;
@@ -47,11 +48,6 @@ public class PlayerController : MonoBehaviour
 			transform.position += dir.normalized * moveDist;
 			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 20 * Time.deltaTime);
 		}
-
-		// 애니메이션
-		Animator anim = GetComponent<Animator>();
-		// 현재 게임 상태에 대한 정보를 넘겨준다
-		anim.SetFloat("speed", _speed);
 	}
 
 	void UpdateIdle()
@@ -68,6 +64,9 @@ public class PlayerController : MonoBehaviour
 				break;
 			case PlayerState.Moving:
 				UpdateMoving();
+				break;
+			case PlayerState.Idle:
+				UpdateIdle();
 				break;
 		}
 	}
